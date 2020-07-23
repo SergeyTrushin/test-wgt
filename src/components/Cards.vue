@@ -4,7 +4,7 @@
 
 		<div class="items">
 
-			<div class="item" v-for="curName of paginatedData" >
+			<div class="item" v-for="curName of paginatedData">
 				<p class="curName">{{ value }}  <span>{{ baseCurrency }} = </span></p>
 				<div class="curValue">
 					<span class="valueOfCur">
@@ -44,7 +44,7 @@ export default{
 			return this.$store.getters.getBaseCurrency
 		},
 		baseSize(){
-			return this.$store.getters.getNumberOfRates
+			return this.$store.getters.getNumberOfRates - 1
 		},
 		pageCount(){
       		let l = this.baseSize,
@@ -55,8 +55,10 @@ export default{
 		paginatedData(){
     		const start = this.pageNumber * this.size,
           		  end = start + this.size;
-          	console.log(this.$store.getters.activeNumber)
-    		return this.getListOfRates.slice(start, end)
+  			const index = this.getListOfRates.indexOf(this.baseCurrency)
+  			const list = [...this.getListOfRates]
+  			index !== -1 ? list.splice(index,1) : "";
+    		return list.slice(start, end)
 		}
 },
 	data(){

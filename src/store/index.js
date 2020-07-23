@@ -6,7 +6,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
 	state: {
 		data : {},
-		baseCurrency : '',
+		baseCurrency : 'GBP',
 	},
 	mutations: {
 		updateData(state, data){
@@ -20,16 +20,14 @@ export default new Vuex.Store({
 		async fetchData(ctx){
 			const resp = await fetch('https://api.openrates.io/latest?base=' + this.state.baseCurrency)
 			const data = await resp.json()
-			await ctx.commit('updateData', data)
 			await ctx.commit('updateBaseCurrency', data.base)
+			await ctx.commit('updateData', data)
 		},
 		async updateBase(ctx,base){
 			await ctx.commit('updateBaseCurrency',base)
 			const resp = await fetch('https://api.openrates.io/latest?base=' + this.state.baseCurrency)
 			const data = await resp.json()
 			await ctx.commit('updateData', data)
-
-
 		}
 	},
 	getters: {

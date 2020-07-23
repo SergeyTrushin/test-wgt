@@ -69,7 +69,14 @@ export default {
 			return this.$store.getters.getBaseCurrency
 		},
 		getListOfRates(){
-			return this.$store.getters.getListOfRates
+			const rates = [...this.$store.getters.getListOfRates]
+
+			if (rates.indexOf(this.$store.state.data.base) === -1){
+				console.log(rates)
+				rates.push(this.$store.state.data.base)
+				console.log(rates)
+			}
+			return rates
 		},
 		getRates(){
 			return this.$store.getters.getRates
