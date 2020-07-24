@@ -20,7 +20,6 @@ export default new Vuex.Store({
 		async fetchData(ctx){
 			const resp = await fetch('https://api.openrates.io/latest?base=' + this.state.baseCurrency)
 			const data = await resp.json()
-			await ctx.commit('updateBaseCurrency', data.base)
 			await ctx.commit('updateData', data)
 		},
 		async updateBase(ctx,base){
@@ -36,6 +35,7 @@ export default new Vuex.Store({
 			for (let rate in state.data.rates){
 				rates.push(rate)
 			}
+			state.data.base === 'EUR' ? rates.splice(12 ,0, 'EUR') : null;
 			return rates
 		},
 		getBaseCurrency(state){

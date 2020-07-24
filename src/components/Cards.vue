@@ -50,7 +50,7 @@ export default{
       		let l = this.baseSize,
           	s = this.size;
       		return Math.ceil(l/s);
-      		// return Math.floor(l/s);
+      		// return Math.floor(l/s);``
 		},
 		paginatedData(){
     		const start = this.pageNumber * this.size,
