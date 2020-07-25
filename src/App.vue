@@ -62,7 +62,6 @@ export default {
 			activeCur : 0,
 			end : 7,
 			start: 0,
-			howManyShow : 7,
 			size : 4
 		}
 	},
@@ -71,36 +70,24 @@ export default {
 			return this.$store.getters.getBaseCurrency
 		},
 		getListOfRates(){
-			const rates = [...this.$store.getters.getListOfRates]
-			return rates
+			return this.$store.getters.getListOfRates
 		},
 		getRates(){
 			return this.$store.getters.getRates
 		},
-		getActiveNumber(name){
-			this.$store.getters.activeNumber
-		},
+
 	},
 	async mounted(){
 		this.$store.dispatch("fetchData")
 
-		window.onload = ()=>{
-			if (this.$refs.con.clientWidth<720){
-				this.howManyShow = 3
-				this.end = this.start + this.howManyShow
-				this.size = 2
-			}else {
-				this.howManyShow = this.end = 7
-				this.size = 4
-			}
-		}
-		
 		window.onresize = ()=>{
 			if (this.$refs.con.clientWidth<720){
-				this.howManyShow = this.end = 3
+				this.start = this.activeCur
+				this.end = this.activeCur + 3
 				this.size = 2
 			}else {
-				this.howManyShow = this.end = 7
+				this.start = this.activeCur
+				this.end = this.activeCur + 7
 				this.size = 4
 			}
 		}
@@ -113,7 +100,7 @@ export default {
 		},
 
 		next(){
-			if(this.activeCur >=this.howManyShow-1 && this.activeCur < this.getListOfRates.length-1 && this.activeCur===this.end-1){
+			if(this.activeCur >=this.end-1 && this.activeCur < this.getListOfRates.length-1 && this.activeCur===this.end-1){
 				this.start++;
 				this.end++;
 			}
@@ -137,7 +124,7 @@ export default {
 		},
 		isActive(cur){
 			return cur === this.getListOfRates[this.activeCur]
-		}
+		},
 	}
 }
 </script>
@@ -165,10 +152,11 @@ export default {
 	}
 
 	#app{
-		padding-bottom: 24px;
 		#container{
+			padding-bottom: 24px;
 			margin: 0 auto;
 			max-width: 720px;
+			background: #fff;
 		}
 	}
 

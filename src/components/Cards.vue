@@ -1,7 +1,5 @@
 <template>
 	<div id='main'>
-
-
 		<div class="items" ref='items'>
 			
 			<div v-if="!getRates" class="lds-dual-ring"></div>
@@ -9,7 +7,7 @@
 				<p class="curName">{{ value }}  <span>{{ baseCurrency }} = </span></p>
 				<div class="curValue">
 					<span class="valueOfCur">
-						{{   (getRates[curName] * (+value) ).toFixed(2) }}
+						{{ calc(getRates[curName]) }}
 					</span> 
 
 					<span class="curName">
@@ -29,7 +27,9 @@
 </template>
 
 <script>
-	
+
+const BigNumber = require('bignumber.js');
+
 export default{
 	props: [
 		'value',
@@ -75,7 +75,10 @@ export default{
       },
       prevPage(){
         this.pageNumber--;
-      }
+      },
+      calc(rate){
+			return new BigNumber(rate).times(this.value).toFixed(2)
+		}
 	}
 }
 

@@ -51,12 +51,5 @@ export default new Vuex.Store({
 			}
 			return rates.length
 		},
-		activeNumber(state){
-			let rates = []
-			for (let rate in state.data.rates){
-				rates.push(rate)
-			}
-			return rates.indexOf()
-		}
 	}
 })
