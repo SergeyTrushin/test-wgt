@@ -1,14 +1,15 @@
 <template>
-	<div>
+	<div id='main'>
 
 
-		<div class="items">
-
-			<div class="item" v-for="curName of paginatedData">
+		<div class="items" ref='items'>
+			
+			<div v-if="!getRates" class="lds-dual-ring"></div>
+			<div v-else class="item" v-for="curName of paginatedData">
 				<p class="curName">{{ value }}  <span>{{ baseCurrency }} = </span></p>
 				<div class="curValue">
 					<span class="valueOfCur">
-						{{  (getRates[curName] * value).toFixed(2) }}
+						{{   (getRates[curName] * (+value) ).toFixed(2) }}
 					</span> 
 
 					<span class="curName">
@@ -32,6 +33,7 @@
 export default{
 	props: [
 		'value',
+		'size'
 	],
 	computed: {
 		getRates(){
@@ -59,12 +61,12 @@ export default{
   			const list = [...this.getListOfRates]
   			index !== -1 ? list.splice(index,1) : "";
     		return list.slice(start, end)
-		}
+		},
+
 },
 	data(){
 		return{
 			pageNumber: 0,
-			size: 4, 
 		}
 	},
 	methods : {
@@ -80,19 +82,23 @@ export default{
 </script>
 
 
-<style lang="scss" scoped>
+<style lang="scss">
+
 	.items{
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
 		justify-content: flex-start;
 		.item{
+			padding: 0 0 19px 23px;
 			width: 46%;
 			display: flex;
 			flex-direction: column;
 			align-items: flex-start;
 			justify-content: center;
-			margin-left: 24px;
+			margin: 0 24px 18px 0;
+			box-shadow: 0px 3px 6px rgba(157, 157, 157, 0.16);
+			border-radius: 12px;
 			.curName{
 				font-weight: normal;
 				font-size: 18px;
@@ -110,6 +116,38 @@ export default{
 				line-height: 56px;
 				letter-spacing: 0.0342857px;
 			}
+		}
+		.lds-dual-ring {
+  			display: inline-block;
+  			width: 80px;
+  			height: 80px;
+  			margin: 0 auto;
+		}
+		.lds-dual-ring:after {
+  			content: " ";
+  			display: block;
+  			width: 64px;
+  			height: 64px;
+  			margin: 8px;
+  			border-radius: 50%;
+  			border: 6px solid #fff;
+  			border-color: red transparent #fff transparent;
+  			animation: lds-dual-ring 1.2s linear infinite;
+		}
+		@keyframes lds-dual-ring {
+  			0% {
+    			transform: rotate(0deg);
+  			}
+  			100% {
+   				 transform: rotate(360deg);
+  			}
+		}
+
+	}
+
+	#main.small{
+		.item{
+			width: 100%;
 		}
 	}
 
