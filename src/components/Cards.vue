@@ -4,10 +4,10 @@
 			
 			<div v-if="!getRates" class="lds-dual-ring"></div>
 			<div v-else class="item" v-for="curName of paginatedData">
-				<p class="curName">{{ value }}  <span>{{ baseCurrency }} = </span></p>
+				<p class="curName">{{ value ? value : 0 }}  <span>{{ baseCurrency }} = </span></p>
 				<div class="curValue">
 					<span class="valueOfCur">
-						{{ calc(getRates[curName]) }}
+						{{ calc(getRates[curName]).replace(/\./g,',') !== 'NaN' ? calc(getRates[curName]).replace(/\./g,',') : '0' }}
 					</span> 
 
 					<span class="curName">
@@ -95,6 +95,7 @@ export default{
 		.item{
 			padding: 0 0 19px 23px;
 			width: 46%;
+			color: #2B2D33;
 			display: flex;
 			flex-direction: column;
 			align-items: flex-start;
@@ -118,6 +119,7 @@ export default{
 				font-size: 48px;
 				line-height: 56px;
 				letter-spacing: 0.0342857px;
+				font-weight: 300;
 			}
 		}
 		.lds-dual-ring {
@@ -150,11 +152,14 @@ export default{
 
 	#main.small{
 		.item{
-			width: 100%;
+			width: 85%;
+			margin: 0 auto;
+			margin-bottom: 18px;
 		}
 	}
 
 	.btn{
+		position: relative;
 		margin-top: 41px;
 		display: flex;
 		justify-content: center;
@@ -163,10 +168,15 @@ export default{
 		button{
 			text-transform: uppercase;
 			width: 112px;
-			height: 34px;
+			height: 39px;
 			border: none;
 			border-radius: 8px;
 			margin-right: 19px;
+			font-weight: 300;
+			font-size: 14px;
+			line-height: 16px;
+			letter-spacing: 1px;
+			color: #2B2D33;
 			&:last-child{
 				margin-right: 0;
 			};
@@ -174,12 +184,41 @@ export default{
 
 		.back{
 			background: #EFEFEF;
-			box-shadow: 0 5px 6px rgba(157, 157, 157, 0.16);
+			color: #787878;
+			box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+			&:before{
+				content:'';
+				display: inline-block;
+				width: 8px;
+				height: 8px;
+				border: 1px solid #787878;
+				border: none;
+				border-bottom: 1px solid;
+				border-left: 1px solid;
+				transform: rotate(45deg);
+				top: calc(50% - 4px);
+				left: 0;
+				margin-right: 11px;
+			}
 		}
 
 		.next{
 			background: #FFFFFF;
 			box-shadow: 0 5px 10px rgba(157, 157, 157, 0.16);
+			&:after{
+				content:'';
+				position: absolute;
+				display: inline-block;
+				width: 8px;
+				height: 8px;
+				border: 1px solid #282828;
+				border: none;
+				border-bottom: 1px solid;
+				border-left: 1px solid;
+				transform: rotate(-135deg);
+				top: calc(50% - 4px);
+				margin-left: 11px;
+			}
 		}
 	}
 </style>

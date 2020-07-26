@@ -13,11 +13,11 @@
 					</button>
 
 					<button class="tab" 
-							v-for="(cur,i) of getListOfRates.slice(start,end)" :key="i"
-							v-bind:class="{ active : isActive(cur) }"
-							@click="getNumber(i,cur)">
+							v-for="p,i in paginatedData"
+							v-bind:class="{ active : isActive(p) }"
+							@click="getNumber(i,p)">
 							
-							{{ cur }}
+							{{ p }}
 					
 					</button>
 
@@ -30,8 +30,9 @@
 		</div>
 		
 		<div class="input">
-			<input type="number"
-				   v-model:value="value"> <span>{{ baseCurrency }}</span>
+			<input type="tel"
+				   @input='clear'
+				   v-model:value="value"> <span>{{ baseCurrency }} </span>
 		</div>
 
 		<Cards v-responsive="{ small: el => el.width < 720 }"
@@ -58,11 +59,11 @@ export default {
   	},
 	data(){
 		return{
-			value : 1,
-			activeCur : 0,
-			end : 7,
-			start: 0,
-			size : 4
+			value : '1', // Значение в input
+			activeCur : 0,  // индекс активной валюты, которая конвертируется
+			pageNumber: 0, // номер страницы с валютами
+			show: 7, // Количество валют на одной странице
+			size : 4 // Количество блоков с переводом в другие валюты
 		}
 	},
 	computed: {
@@ -75,34 +76,73 @@ export default {
 		getRates(){
 			return this.$store.getters.getRates
 		},
+		pageCount(){
+			let l = this.getListOfRates.length,
+          		s = this.end;
+        	return Math.ceil(l/s);
+		},
+		paginatedData(){
+    		const start = this.pageNumber * this.show,
+          		  end = start + this.show;
+    	return this.getListOfRates.slice(start, end);
+		},
 
 	},
 	async mounted(){
 		this.$store.dispatch("fetchData")
 
 		window.onresize = ()=>{
+
 			if (this.$refs.con.clientWidth<720){
-				this.start = this.activeCur
-				this.end = this.activeCur + 3
+				this.show = 3
 				this.size = 2
+				this.pageNumber = 0;
+				while (this.pageNumber * this.show + this.show <= this.activeCur){
+					this.pageNumber++	
+				}
 			}else {
-				this.start = this.activeCur
-				this.end = this.activeCur + 7
+				this.show = 7
 				this.size = 4
+				this.pageNumber = 0;
+				while (this.pageNumber * this.show + this.show <= this.activeCur){
+					this.pageNumber++	
+				}
+			}
+		}
+
+		window.onload = ()=>{
+			this.activeCur = this.$store.getters.getActive
+			if (this.$refs.con.clientWidth<720){
+				this.show = 3
+				this.size = 2
+				this.pageNumber = 0;
+				while (this.pageNumber * this.show + this.show <= this.activeCur){
+					this.pageNumber++	
+				}
+			}else {
+				this.show = 7
+				this.size = 4
+				this.pageNumber = 0;
+				while (this.pageNumber * this.show + this.show <= this.activeCur){
+					this.pageNumber++	
+				}
 			}
 		}
 	},
 	methods: {
+		clear(){
+			this.value = this.value.replace(/[^\d.]/g,'').replace(/^0\d.*/g,"")
+			
+		},
 
-		getNumber(i,cur){
-			this.$store.dispatch('updateBase', cur)
-			this.activeCur = this.getListOfRates.indexOf(cur)
+		getNumber(i,p){
+			this.$store.dispatch('updateBase', p)
+			this.activeCur = this.getListOfRates.indexOf(p)
 		},
 
 		next(){
-			if(this.activeCur >=this.end-1 && this.activeCur < this.getListOfRates.length-1 && this.activeCur===this.end-1){
-				this.start++;
-				this.end++;
+			if(this.paginatedData[this.paginatedData.length-1] === this.getListOfRates[this.activeCur] ){
+				this.pageNumber++;
 			}
 
 			if(this.activeCur < this.getListOfRates.length-1){
@@ -112,12 +152,11 @@ export default {
 		},
 
 		previous(){
-			if(this.activeCur !== 0 && this.getListOfRates[this.activeCur] == this.getListOfRates.slice(this.start, this.end)[0] ){
-				this.start--;
-				this.end--;
+			if(this.paginatedData[0] === this.getListOfRates[this.activeCur] ){
+				this.pageNumber--;
 			}
 
-			if(this.activeCur !== 0){
+			if(this.activeCur > 0){
 				this.activeCur--;
 				this.$store.dispatch('updateBase', this.getListOfRates[this.activeCur])
 			}
@@ -153,16 +192,27 @@ export default {
 
 	#app{
 		#container{
-			padding-bottom: 24px;
 			margin: 0 auto;
 			max-width: 720px;
 			background: #fff;
+			padding-bottom: 24px;
 		}
 	}
 
 	#app.small{
 		#container{
 			width: 320px;
+			.left{
+				left: -10px;
+			}
+
+			.right{
+				right: -10px;
+			}
+
+			.tab{
+				width: 80px;
+			}
 		}
 	}
 
@@ -174,6 +224,7 @@ export default {
 			font-weight: normal;
 			font-size: 21px;
 			line-height: 25px;
+			margin-bottom: 8px;
 		}
 
 		.tabs{
@@ -228,8 +279,7 @@ export default {
 	}
 
 	.input{
-		padding: 1rem;
-		margin-top: 15px;
+		margin: 29px 35px 23px 0;
 		display: flex;
 		justify-content: flex-end;
 		align-items: center;
