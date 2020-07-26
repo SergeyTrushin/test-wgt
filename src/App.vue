@@ -284,6 +284,7 @@ export default {
 		justify-content: flex-end;
 		align-items: center;
 		input{
+			border-radius: none;
 			border: none;
 			border-bottom: 1px solid #D9D9D9;
 			padding: 0.5rem;
